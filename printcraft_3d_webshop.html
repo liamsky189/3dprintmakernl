@@ -1,0 +1,1572 @@
+<!DOCTYPE html>
+<html lang="nl" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PrintCraft 3D - Exclusieve 3D Prints & Custom Designs</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            400: '#38bdf8',
+                            500: '#0284c7',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                            900: '#0c4a6e',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .color-dot-active {
+            ring-width: 3px;
+            ring-color: #0284c7;
+            transform: scale(1.15);
+        }
+        /* Custom scrollbars */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.1); }
+        ::-webkit-scrollbar-thumb { background: rgba(100, 116, 139, 0.5); border-radius: 4px; }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col antialiased transition-colors duration-200">
+
+    <!-- Openbare Aankondigingen Banner -->
+    <div id="announcementsBannerContainer" class="hidden sticky top-0 z-50 shadow-md">
+        <!-- Wordt dynamisch gevuld vanuit JS -->
+    </div>
+
+    <!-- Header / Navigatie -->
+    <header class="bg-slate-800/90 backdrop-blur-md border-b border-slate-700 sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <!-- Logo -->
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="switchTab('shop')">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-500 flex items-center justify-center shadow-lg shadow-brand-500/30">
+                    <i data-lucide="box" class="w-6 h-6 text-white"></i>
+                </div>
+                <div>
+                    <span class="text-xl font-black bg-gradient-to-r from-brand-400 to-indigo-400 bg-clip-text text-transparent">PrintCraft 3D</span>
+                    <span class="block text-[10px] text-slate-400 -mt-1 tracking-widest font-semibold uppercase">Custom Studio</span>
+                </div>
+            </div>
+
+            <!-- Navigatie links -->
+            <nav class="hidden md:flex items-center space-x-6 text-sm font-medium">
+                <button onclick="switchTab('shop')" class="hover:text-brand-400 transition-colors flex items-center space-x-1.5 py-1">
+                    <i data-lucide="shopping-bag" class="w-4 h-4"></i>
+                    <span>Shop</span>
+                </button>
+                <button onclick="switchTab('custom')" class="hover:text-brand-400 transition-colors flex items-center space-x-1.5 py-1">
+                    <i data-lucide="layers" class="w-4 h-4"></i>
+                    <span>Aangepaste Print</span>
+                </button>
+                <button onclick="switchTab('about')" class="hover:text-brand-400 transition-colors flex items-center space-x-1.5 py-1">
+                    <i data-lucide="info" class="w-4 h-4"></i>
+                    <span>Over Ons</span>
+                </button>
+            </nav>
+
+            <!-- Rechter acties -->
+            <div class="flex items-center space-x-3">
+                <!-- Beheer Knop -->
+                <button onclick="openAdminModal()" class="px-3 py-1.5 rounded-lg bg-slate-700 hover:bg-slate-600 text-xs font-semibold text-slate-200 transition-colors flex items-center space-x-1.5 border border-slate-600">
+                    <i data-lucide="shield-check" class="w-4 h-4 text-brand-400"></i>
+                    <span class="hidden sm:inline">Beheer</span>
+                </button>
+
+                <!-- Winkelwagen Knop -->
+                <button onclick="toggleCartDrawer()" class="relative p-2 rounded-xl bg-brand-600 hover:bg-brand-500 text-white shadow-lg shadow-brand-600/30 transition-all flex items-center space-x-2">
+                    <i data-lucide="shopping-cart" class="w-5 h-5"></i>
+                    <span id="cartBadge" class="bg-white text-brand-700 font-bold text-xs rounded-full px-2 py-0.5">0</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hoofdinhoud Container -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+        <!-- TAB: SHOP VIEW -->
+        <section id="shopTab" class="tab-content space-y-8">
+            <!-- Hero Banner -->
+            <div class="relative rounded-3xl bg-gradient-to-r from-slate-800 via-slate-800 to-indigo-950/70 p-8 sm:p-12 border border-slate-700/80 overflow-hidden shadow-2xl">
+                <div class="relative z-10 max-w-2xl">
+                    <span class="inline-block px-3 py-1 rounded-full bg-brand-500/20 text-brand-400 text-xs font-semibold tracking-wider uppercase mb-4 border border-brand-500/30">
+                        ⚡ Snelle verzending in NL & Gratis in Haarlem!
+                    </span>
+                    <h1 class="text-3xl sm:text-5xl font-black text-white leading-tight mb-4">
+                        Breng 3D Ideeën tot <span class="bg-gradient-to-r from-brand-400 to-indigo-400 bg-clip-text text-transparent">Leven</span>
+                    </h1>
+                    <p class="text-slate-300 text-base sm:text-lg mb-6">
+                        Hoogwaardige 3D-geprinte gadgets, decoratie en unieke verzamelobjecten. Kies je eigen kleuren en ontvang je bestelling snel in huis.
+                    </p>
+                    <div class="flex flex-wrap gap-4">
+                        <button onclick="scrollToProducts()" class="px-6 py-3 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-bold shadow-lg shadow-brand-500/30 transition-all flex items-center space-x-2">
+                            <span>Bekijk Collectie</span>
+                            <i data-lucide="arrow-down" class="w-4 h-4"></i>
+                        </button>
+                        <button onclick="switchTab('custom')" class="px-6 py-3 rounded-xl bg-slate-700 hover:bg-slate-600 text-slate-200 font-semibold border border-slate-600 transition-all">
+                            Eigen 3D Bestand Uploaden
+                        </button>
+                    </div>
+                </div>
+                <!-- Decoratieve visual -->
+                <div class="absolute right-[-20px] bottom-[-20px] opacity-15 sm:opacity-25 pointer-events-none">
+                    <i data-lucide="box" class="w-96 h-96 text-brand-400"></i>
+                </div>
+            </div>
+
+            <!-- Producten Grid Header -->
+            <div id="productsSection" class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-4 border-b border-slate-800 pb-4">
+                <div>
+                    <h2 class="text-2xl font-bold text-white">Populaire Producten</h2>
+                    <p class="text-slate-400 text-sm">Selecteer een item en pas jouw favoriete kleur aan</p>
+                </div>
+                <!-- Categorie filter -->
+                <div id="categoryFilters" class="flex flex-wrap gap-2">
+                    <!-- Gevuld via JS -->
+                </div>
+            </div>
+
+            <!-- Producten Grid -->
+            <div id="productsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <!-- Product kaarten dynamisch via JS -->
+            </div>
+        </section>
+
+        <!-- TAB: CUSTOM PRINT VIEW -->
+        <section id="customTab" class="tab-content hidden max-w-3xl mx-auto">
+            <div class="bg-slate-800 rounded-3xl p-8 border border-slate-700 shadow-xl space-y-6">
+                <div class="text-center space-y-2">
+                    <div class="w-12 h-12 bg-brand-500/20 rounded-2xl flex items-center justify-center mx-auto text-brand-400 mb-2">
+                        <i data-lucide="upload-cloud" class="w-6 h-6"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold text-white">Eigen 3D Bestand Laten Printen</h2>
+                    <p class="text-slate-400 text-sm">Heb je zelf een STL of OBJ bestand? Upload het hier en ontvang binnen 24 uur een vrijblijvende prijsopgave!</p>
+                </div>
+
+                <form onsubmit="submitCustomRequest(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Naam</label>
+                        <input type="text" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-slate-100 focus:outline-none focus:border-brand-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">E-mailadres</label>
+                        <input type="email" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-slate-100 focus:outline-none focus:border-brand-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Gewenste Filament Kleur / Materiaal</label>
+                        <select class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-slate-100 focus:outline-none focus:border-brand-500">
+                            <option>PLA Black (Mat)</option>
+                            <option>PLA White (Glans)</option>
+                            <option>PLA Zilver Metal</option>
+                            <option>PETG Transparant</option>
+                            <option>ABS Rood</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Bestand Uploaden (.stl, .obj, .step max 50MB)</label>
+                        <div class="border-2 border-dashed border-slate-700 rounded-2xl p-6 text-center hover:border-brand-500 transition-colors cursor-pointer bg-slate-900/50">
+                            <i data-lucide="file-up" class="w-8 h-8 mx-auto text-slate-500 mb-2"></i>
+                            <span class="text-sm text-slate-400 block">Klik om bestand te kiezen of sleep hier naartoe</span>
+                            <span class="text-xs text-slate-500 block mt-1">(Demo upload functionaliteit)</span>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Aanvullende Wensen / Afmetingen</label>
+                        <textarea rows="3" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-slate-100 focus:outline-none focus:border-brand-500" placeholder="Biijv. Gewenste hoogte in cm, opvullingspercentage (infill)..."></textarea>
+                    </div>
+                    <button type="submit" class="w-full py-3.5 bg-brand-600 hover:bg-brand-500 text-white font-bold rounded-xl shadow-lg shadow-brand-600/30 transition-all flex items-center justify-center space-x-2">
+                        <i data-lucide="send" class="w-5 h-5"></i>
+                        <span>Aanvraag Versturen</span>
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <!-- TAB: ABOUT VIEW -->
+        <section id="aboutTab" class="tab-content hidden max-w-4xl mx-auto space-y-8">
+            <div class="bg-slate-800 rounded-3xl p-8 border border-slate-700 shadow-xl space-y-6">
+                <h2 class="text-3xl font-bold text-white">Over PrintCraft 3D Studio</h2>
+                <p class="text-slate-300 leading-relaxed">
+                    PrintCraft 3D is jouw lokale specialist in precisie-3D-printing. Met geavanceerde FDM- en Resin-printers realiseren wij hoogwaardige prints voor zowel consumenten als zakelijke klanten.
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4">
+                    <div class="bg-slate-900/60 p-5 rounded-2xl border border-slate-700/60">
+                        <i data-lucide="zap" class="w-8 h-8 text-brand-400 mb-3"></i>
+                        <h3 class="font-bold text-white text-lg mb-1">Snelle Levering</h3>
+                        <p class="text-xs text-slate-400">Meeste bestellingen binnen 2-3 werkdagen verzonden.</p>
+                    </div>
+                    <div class="bg-slate-900/60 p-5 rounded-2xl border border-slate-700/60">
+                        <i data-lucide="map-pin" class="w-8 h-8 text-emerald-400 mb-3"></i>
+                        <h3 class="font-bold text-white text-lg mb-1">Lokaal in Haarlem</h3>
+                        <p class="text-xs text-slate-400">Gratis lokale bezorging voor postcodes 2011 t/m 2037!</p>
+                    </div>
+                    <div class="bg-slate-900/60 p-5 rounded-2xl border border-slate-700/60">
+                        <i data-lucide="award" class="w-8 h-8 text-indigo-400 mb-3"></i>
+                        <h3 class="font-bold text-white text-lg mb-1">Top Kwaliteit</h3>
+                        <p class="text-xs text-slate-400">Geprint met biologisch afbreekbaar en stevig PLA/PETG filament.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB: ADMIN PANEL VIEW -->
+        <section id="adminTab" class="tab-content hidden space-y-6">
+            <!-- Admin Header -->
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-slate-800 p-6 rounded-2xl border border-slate-700 gap-4">
+                <div>
+                    <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+                        <i data-lucide="shield-check" class="text-brand-400"></i>
+                        Beheerpaneel Admin
+                    </h2>
+                    <p class="text-slate-400 text-sm">Beheer bestellingen, geplaatste berichten & aftelklokken, en producten</p>
+                </div>
+                <button onclick="logoutAdmin()" class="px-4 py-2 bg-rose-500/20 text-rose-300 hover:bg-rose-500/30 border border-rose-500/30 rounded-xl text-xs font-semibold flex items-center space-x-2 transition-colors">
+                    <i data-lucide="log-out" class="w-4 h-4"></i>
+                    <span>Uitloggen</span>
+                </button>
+            </div>
+
+            <!-- Admin Sub-tabs -->
+            <div class="flex border-b border-slate-700 space-x-4 overflow-x-auto">
+                <button onclick="switchAdminSubTab('orders')" id="btnAdminTabOrders" class="pb-3 border-b-2 border-brand-500 font-bold text-brand-400 text-sm flex items-center space-x-2 whitespace-nowrap">
+                    <i data-lucide="package" class="w-4 h-4"></i>
+                    <span>📦 Bestellingen (<span id="ordersCount">0</span>)</span>
+                </button>
+                <button onclick="switchAdminSubTab('announcements')" id="btnAdminTabAnnouncements" class="pb-3 border-b-2 border-transparent text-slate-400 hover:text-slate-200 font-bold text-sm flex items-center space-x-2 whitespace-nowrap">
+                    <i data-lucide="megaphone" class="w-4 h-4"></i>
+                    <span>📢 Bericht & Aftelklok</span>
+                </button>
+                <button onclick="switchAdminSubTab('coupons')" id="btnAdminTabCoupons" class="pb-3 border-b-2 border-transparent text-slate-400 hover:text-slate-200 font-bold text-sm flex items-center space-x-2 whitespace-nowrap">
+                    <i data-lucide="tag" class="w-4 h-4"></i>
+                    <span>🏷️ Kortingscodes</span>
+                </button>
+                <button onclick="switchAdminSubTab('products')" id="btnAdminTabProducts" class="pb-3 border-b-2 border-transparent text-slate-400 hover:text-slate-200 font-bold text-sm flex items-center space-x-2 whitespace-nowrap">
+                    <i data-lucide="grid" class="w-4 h-4"></i>
+                    <span>🛍️ Producten Beheer</span>
+                </button>
+            </div>
+
+            <!-- ADMIN SUBTAB: ORDERS -->
+            <div id="adminSubTabOrders" class="space-y-4">
+                <div id="adminOrdersList" class="space-y-4">
+                    <!-- Wordt gevuld via JS -->
+                </div>
+            </div>
+
+            <!-- ADMIN SUBTAB: ANNOUNCEMENTS / COUNTDOWN -->
+            <div id="adminSubTabAnnouncements" class="hidden grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Formulier nieuw bericht -->
+                <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 lg:col-span-1 space-y-4">
+                    <h3 class="text-lg font-bold text-white flex items-center space-x-2">
+                        <i data-lucide="plus-circle" class="w-5 h-5 text-brand-400"></i>
+                        <span>Nieuwe Mededeling</span>
+                    </h3>
+                    
+                    <form onsubmit="handleCreateAnnouncement(event)" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Type Bericht</label>
+                            <select id="annType" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-brand-500">
+                                <option value="info">ℹ️ Informatie / Algemeen</option>
+                                <option value="warning">🚨 Belangrijke Melding</option>
+                                <option value="promo">⚡ Aanbieding / Actie</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Titel / Korte Tekst</label>
+                            <input type="text" id="annTitle" required placeholder="bijv. Tijdelijke Paasactie!" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-brand-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Bericht Details</label>
+                            <textarea id="annMessage" required rows="3" placeholder="bijv. Ontvang 15% korting op alle 3D geprinte draken met code DRAAK15!" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-brand-500"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Looptijd Aftelklok (Uren)</label>
+                            <select id="annDuration" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-brand-500">
+                                <option value="24">24 Uur (1 dag)</option>
+                                <option value="48" selected>48 Uur (2 dagen)</option>
+                                <option value="72">72 Uur (3 dagen)</option>
+                                <option value="168">1 Week</option>
+                                <option value="0">Geen aftelklok</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="w-full py-2.5 bg-brand-600 hover:bg-brand-500 font-bold rounded-xl text-white text-sm shadow-md transition-all flex items-center justify-center space-x-2">
+                            <i data-lucide="megaphone" class="w-4 h-4"></i>
+                            <span>Bericht Publiceren</span>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Overzicht geplaatste berichten -->
+                <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 lg:col-span-2 space-y-4">
+                    <h3 class="text-lg font-bold text-white">Geplaatste Berichten & Aftelklokken</h3>
+                    <div id="adminAnnouncementsList" class="space-y-3">
+                        <!-- Gevuld via JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- ADMIN SUBTAB: COUPONS MANAGEMENT -->
+            <div id="adminSubTabCoupons" class="hidden grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Formulier nieuwe kortingscode -->
+                <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 lg:col-span-1 space-y-4">
+                    <h3 class="text-lg font-bold text-white flex items-center space-x-2">
+                        <i data-lucide="tag" class="w-5 h-5 text-brand-400"></i>
+                        <span>Nieuwe Kortingscode</span>
+                    </h3>
+                    
+                    <form onsubmit="handleCreateCoupon(event)" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Kortingscode (bv. WELKOM10)</label>
+                            <input type="text" id="couponCodeInput" required placeholder="bijv. ZOMER20" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-slate-200 uppercase focus:outline-none focus:border-brand-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Korting Percentage (%)</label>
+                            <input type="number" id="couponPercentInput" required min="1" max="100" placeholder="15" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-brand-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Omschrijving (optioneel)</label>
+                            <input type="text" id="couponDescInput" placeholder="bijv. 15% Zomeractie korting" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-brand-500">
+                        </div>
+
+                        <button type="submit" class="w-full py-2.5 bg-brand-600 hover:bg-brand-500 font-bold rounded-xl text-white text-sm shadow-md transition-all flex items-center justify-center space-x-2">
+                            <i data-lucide="plus" class="w-4 h-4"></i>
+                            <span>Kortingscode Aanmaken</span>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Overzicht actieve kortingscodes -->
+                <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 lg:col-span-2 space-y-4">
+                    <h3 class="text-lg font-bold text-white">Actieve Kortingscodes op Webshop</h3>
+                    <div id="adminCouponsList" class="space-y-3">
+                        <!-- Gevuld via JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- ADMIN SUBTAB: PRODUCTS -->
+            <div id="adminSubTabProducts" class="hidden space-y-4">
+                <div class="flex justify-between items-center bg-slate-800 p-4 rounded-xl border border-slate-700">
+                    <span class="text-sm font-medium text-slate-300">Totaal artikelen: <strong id="adminProductsCount">0</strong></span>
+                    <button onclick="openProductEditModal(null)" class="px-3 py-2 bg-brand-600 hover:bg-brand-500 rounded-xl text-xs font-bold text-white flex items-center space-x-1.5">
+                        <i data-lucide="plus" class="w-4 h-4"></i>
+                        <span>Nieuw Product Toevoegen</span>
+                    </button>
+                </div>
+                <div id="adminProductsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <!-- Gevuld via JS -->
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- WINKELWAGEN DRAWER (Zijbalk) -->
+    <div id="cartOverlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden transition-opacity" onclick="toggleCartDrawer()"></div>
+    <div id="cartDrawer" class="fixed right-0 top-0 bottom-0 w-full max-w-md bg-slate-800 border-l border-slate-700 z-50 transform translate-x-full transition-transform duration-300 ease-in-out flex flex-col shadow-2xl">
+        <!-- Header -->
+        <div class="p-4 border-b border-slate-700 flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+                <i data-lucide="shopping-bag" class="w-5 h-5 text-brand-400"></i>
+                <h2 class="text-lg font-bold text-white">Winkelwagen</h2>
+            </div>
+            <button onclick="toggleCartDrawer()" class="p-1 hover:bg-slate-700 rounded-lg text-slate-400 hover:text-white">
+                <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
+        </div>
+
+        <!-- Cart Items -->
+        <div id="cartItemsList" class="flex-grow overflow-y-auto p-4 space-y-4">
+            <!-- Dynamisch via JS -->
+        </div>
+
+        <!-- Checkout & Totalen Footer -->
+        <div class="p-4 border-t border-slate-700 bg-slate-850 space-y-3">
+            <!-- Kortingscode Invoeren -->
+            <div class="flex gap-2">
+                <input type="text" id="couponInput" placeholder="Kortingscode (bijv. 3DPRINT10)" class="flex-grow bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-200 uppercase focus:outline-none focus:border-brand-500">
+                <button onclick="applyCoupon()" class="px-3 py-2 bg-slate-700 hover:bg-slate-600 text-xs font-semibold text-slate-200 rounded-xl border border-slate-600">Toepassen</button>
+            </div>
+            <div id="couponMessage" class="text-xs hidden"></div>
+
+            <!-- Berekening -->
+            <div class="space-y-1.5 text-xs text-slate-300">
+                <div class="flex justify-between">
+                    <span>Subtotaal:</span>
+                    <span id="cartSubtotal" class="font-semibold text-white">€0,00</span>
+                </div>
+                <div id="discountRow" class="flex justify-between text-emerald-400 hidden">
+                    <span>Korting:</span>
+                    <span id="cartDiscount">-€0,00</span>
+                </div>
+                <div class="flex justify-between">
+                    <span>Verzendkosten:</span>
+                    <span id="cartShipping" class="font-semibold text-slate-200">Wordt berekend bij adres</span>
+                </div>
+                <div class="flex justify-between text-base font-bold text-white pt-2 border-t border-slate-700">
+                    <span>Totaal:</span>
+                    <span id="cartTotal" class="text-brand-400">€0,00</span>
+                </div>
+            </div>
+
+            <button onclick="openCheckoutModal()" id="btnCheckout" class="w-full py-3 bg-brand-600 hover:bg-brand-500 font-bold rounded-xl text-white shadow-lg shadow-brand-600/30 transition-all flex items-center justify-center space-x-2">
+                <span>Afrekenen</span>
+                <i data-lucide="arrow-right" class="w-4 h-4"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- MODAL: AFREKENEN & KLANTGEGEVENS -->
+    <div id="checkoutModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-slate-800 border border-slate-700 rounded-3xl max-w-lg w-full p-6 space-y-5 my-8 shadow-2xl relative">
+            <button onclick="closeCheckoutModal()" class="absolute right-4 top-4 p-1 rounded-lg text-slate-400 hover:text-white">
+                <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
+
+            <h3 class="text-xl font-bold text-white flex items-center space-x-2">
+                <i data-lucide="credit-card" class="text-brand-400"></i>
+                <span>Bestelling Afronden</span>
+            </h3>
+
+            <form onsubmit="processOrder(event)" class="space-y-4 text-xs">
+                <div class="space-y-3">
+                    <h4 class="font-semibold text-brand-400 uppercase tracking-wider text-[11px]">1. Persoonsgegevens</h4>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-slate-400 mb-1">Voornaam & Achternaam *</label>
+                            <input type="text" id="custName" required placeholder="Jan Jansen" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-slate-100 focus:outline-none focus:border-brand-500">
+                        </div>
+                        <div>
+                            <label class="block text-slate-400 mb-1">E-mailadres *</label>
+                            <input type="email" id="custEmail" required placeholder="jan@example.nl" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-slate-100 focus:outline-none focus:border-brand-500">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-slate-400 mb-1">Telefoonnummer *</label>
+                        <input type="tel" id="custPhone" required placeholder="0612345678" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-slate-100 focus:outline-none focus:border-brand-500">
+                    </div>
+                </div>
+
+                <div class="space-y-3 pt-2">
+                    <h4 class="font-semibold text-brand-400 uppercase tracking-wider text-[11px]">2. Bezorgadres (Gratis in Haarlem!)</h4>
+                    <div class="grid grid-cols-3 gap-3">
+                        <div class="col-span-2">
+                            <label class="block text-slate-400 mb-1">Straatnaam *</label>
+                            <input type="text" id="custStreet" required placeholder="Grote Markt" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-slate-100 focus:outline-none focus:border-brand-500">
+                        </div>
+                        <div>
+                            <label class="block text-slate-400 mb-1">Huisnummer *</label>
+                            <input type="text" id="custHouseNo" required placeholder="12" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-slate-100 focus:outline-none focus:border-brand-500">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-slate-400 mb-1">Postcode *</label>
+                            <input type="text" id="custZip" required oninput="calculateDynamicShipping()" placeholder="2011 RD" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-slate-100 focus:outline-none focus:border-brand-500 uppercase">
+                        </div>
+                        <div>
+                            <label class="block text-slate-400 mb-1">Plaats *</label>
+                            <input type="text" id="custCity" required oninput="calculateDynamicShipping()" placeholder="Haarlem" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-slate-100 focus:outline-none focus:border-brand-500">
+                        </div>
+                    </div>
+                    <!-- Live Verzendmelding -->
+                    <div id="shippingNotice" class="p-2.5 rounded-xl bg-slate-900/80 border border-slate-700 text-slate-300 flex items-center space-x-2">
+                        <i data-lucide="truck" class="w-4 h-4 text-brand-400"></i>
+                        <span id="shippingNoticeText">Vul je postcode/plaats in voor verzendberekening.</span>
+                    </div>
+                </div>
+
+                <div class="space-y-3 pt-2">
+                    <h4 class="font-semibold text-brand-400 uppercase tracking-wider text-[11px]">3. Betaalmethode</h4>
+                    <div class="grid grid-cols-2 gap-2">
+                        <label class="flex items-center space-x-2 p-2.5 rounded-xl border border-slate-700 bg-slate-900 cursor-pointer hover:border-brand-500">
+                            <input type="radio" name="payment" value="iDEAL" checked class="text-brand-500 focus:ring-0">
+                            <span class="font-medium text-slate-200">iDEAL</span>
+                        </label>
+                        <label class="flex items-center space-x-2 p-2.5 rounded-xl border border-slate-700 bg-slate-900 cursor-pointer hover:border-brand-500">
+                            <input type="radio" name="payment" value="Bancontact / Creditcard" class="text-brand-500 focus:ring-0">
+                            <span class="font-medium text-slate-200">Creditcard / Bancontact</span>
+                        </label>
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-sm shadow-lg shadow-emerald-600/30 transition-all flex items-center justify-center space-x-2 mt-4">
+                    <i data-lucide="check-circle" class="w-5 h-5"></i>
+                    <span>Bestelling Platsen & Betalen</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: ADMIN LOGIN -->
+    <div id="adminLoginModal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-slate-800 border border-slate-700 rounded-3xl max-w-sm w-full p-6 space-y-4 shadow-2xl relative">
+            <button onclick="closeAdminLoginModal()" class="absolute right-4 top-4 text-slate-400 hover:text-white">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+            <div class="text-center space-y-1">
+                <div class="w-12 h-12 bg-brand-500/20 text-brand-400 rounded-2xl flex items-center justify-center mx-auto mb-2">
+                    <i data-lucide="lock" class="w-6 h-6"></i>
+                </div>
+                <h3 class="text-xl font-bold text-white">Beheer Inloggen</h3>
+                <p class="text-xs text-slate-400">Voer je inloggegevens in (Standaard: admin / admin123)</p>
+            </div>
+
+            <form onsubmit="handleAdminLogin(event)" class="space-y-3">
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Gebruikersnaam</label>
+                    <input type="text" id="adminUser" required value="admin" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-sm text-slate-100 focus:outline-none focus:border-brand-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Wachtwoord</label>
+                    <input type="password" id="adminPass" required value="admin123" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-sm text-slate-100 focus:outline-none focus:border-brand-500">
+                </div>
+                <div id="adminLoginError" class="text-xs text-rose-400 hidden">Onjuiste inloggegevens!</div>
+                <button type="submit" class="w-full py-3 bg-brand-600 hover:bg-brand-500 text-white font-bold rounded-xl text-sm shadow-lg shadow-brand-600/30">
+                    Inloggen
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: PRODUCT BEWERKEN / TOEVOEGEN -->
+    <div id="productModal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-slate-800 border border-slate-700 rounded-3xl max-w-lg w-full p-6 space-y-4 shadow-2xl relative">
+            <button onclick="closeProductModal()" class="absolute right-4 top-4 text-slate-400 hover:text-white">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+            <h3 id="productModalTitle" class="text-xl font-bold text-white">Nieuw Product Toevoegen</h3>
+
+            <form onsubmit="handleSaveProduct(event)" class="space-y-3 text-xs">
+                <input type="hidden" id="editProductId">
+                <div>
+                    <label class="block font-semibold uppercase text-slate-400 mb-1">Productnaam</label>
+                    <input type="text" id="prodName" required placeholder="bijv. Sleutelhanger Custom" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-slate-100 focus:outline-none focus:border-brand-500">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-semibold uppercase text-slate-400 mb-1">Categorie</label>
+                        <input type="text" id="prodCategory" required placeholder="bijv. Gadgets" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-slate-100 focus:outline-none focus:border-brand-500">
+                    </div>
+                    <div>
+                        <label class="block font-semibold uppercase text-slate-400 mb-1">Prijs (€)</label>
+                        <input type="number" step="0.01" id="prodPrice" required placeholder="12.50" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-slate-100 focus:outline-none focus:border-brand-500">
+                    </div>
+                </div>
+                <div>
+                    <label class="block font-semibold uppercase text-slate-400 mb-1">Afbeelding URL</label>
+                    <input type="url" id="prodImage" required placeholder="https://..." class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-slate-100 focus:outline-none focus:border-brand-500">
+                </div>
+                <div>
+                    <label class="block font-semibold uppercase text-slate-400 mb-1">Beschrijving</label>
+                    <textarea id="prodDesc" rows="3" required placeholder="Korte omschrijving..." class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-slate-100 focus:outline-none focus:border-brand-500"></textarea>
+                </div>
+                <div>
+                    <label class="block font-semibold uppercase text-slate-400 mb-1">Beschikbare Kleuren (commagescheiden hex, bijv: #ef4444, #3b82f6)</label>
+                    <input type="text" id="prodColors" required placeholder="#ef4444, #3b82f6, #000000" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-slate-100 focus:outline-none focus:border-brand-500">
+                </div>
+                <button type="submit" class="w-full py-3 bg-brand-600 hover:bg-brand-500 text-white font-bold rounded-xl text-sm shadow-lg shadow-brand-600/30 mt-2">
+                    Opslaan
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast notificatie -->
+    <div id="toast" class="fixed bottom-6 right-6 z-50 bg-slate-800 border border-slate-700 text-white px-4 py-3 rounded-2xl shadow-2xl transform translate-y-20 opacity-0 transition-all duration-300 flex items-center space-x-3 pointer-events-none">
+        <i id="toastIcon" data-lucide="check-circle" class="w-5 h-5 text-emerald-400"></i>
+        <span id="toastMsg" class="text-sm font-medium">Notificatie bericht</span>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-slate-950 border-t border-slate-800 py-8 mt-12 text-slate-400 text-xs">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="flex items-center space-x-2">
+                <i data-lucide="box" class="w-5 h-5 text-brand-400"></i>
+                <span class="font-bold text-slate-200">PrintCraft 3D Studio</span>
+                <span>© 2026 - Alle rechten voorbehouden</span>
+            </div>
+            <div class="flex space-x-4">
+                <span>📍 Studio in Haarlem</span>
+                <span>🚀 Snelle 3D Print Service</span>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // APP STATE
+        let products = [
+            {
+                id: 'p1',
+                name: 'Gelede Articulated Draak',
+                category: 'Verzamelobjecten',
+                price: 19.95,
+                colors: ['#ef4444', '#3b82f6', '#10b981', '#f59e0b', '#000000'],
+                selectedColor: '#ef4444',
+                image: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&w=600&q=80',
+                description: 'Volledig beweegbare en flexibele 3D geprinte draak met hoge precisie details.'
+            },
+            {
+                id: 'p2',
+                name: 'Geometrische Plantenpot',
+                category: 'Decoratie',
+                price: 14.50,
+                colors: ['#ffffff', '#64748b', '#000000'],
+                selectedColor: '#ffffff',
+                image: 'https://images.unsplash.com/photo-1485955900006-10f4d324d411?auto=format&fit=crop&w=600&q=80',
+                description: 'Moderne minimalistische plantenpot geschikt voor vetplanten en kleine kamerplanten.'
+            },
+            {
+                id: 'p3',
+                name: 'Koptelefoon Standaard Hexagon',
+                category: 'Gadgets',
+                price: 24.95,
+                colors: ['#38bdf8', '#000000', '#6366f1'],
+                selectedColor: '#38bdf8',
+                image: 'https://images.unsplash.com/photo-1546435770-a3e426bf472b?auto=format&fit=crop&w=600&q=80',
+                description: 'Stevige en stijlvolle bureauhouder voor je over-ear gaming koptelefoon.'
+            },
+            {
+                id: 'p4',
+                name: 'Gepersonaliseerde Sleutelhanger',
+                category: 'Gadgets',
+                price: 7.95,
+                colors: ['#f43f5e', '#a855f7', '#06b6d4'],
+                selectedColor: '#f43f5e',
+                image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=600&q=80',
+                description: 'Unieke custom sleutelhanger geprint in jouw favoriete kleur.'
+            }
+        ];
+
+        let cart = [];
+        let appliedCoupon = null;
+        let isAdminLoggedIn = false;
+        let activeCategory = 'Alles';
+
+        // DYNAMISCHE KORTINGSCODES
+        let coupons = [
+            { code: '3DPRINT10', discountPercent: 10, description: '10% korting op het hele assortiment' },
+            { code: 'HAARLEM', discountPercent: 15, description: '15% speciale lokale Haarlem korting' }
+        ];
+
+        // SAMPLE ORDERS MET VOLLEDIGE GEGEVENS
+        let orders = [
+            {
+                id: 'ORD-8921',
+                date: '08-10-2026 11:30',
+                customer: {
+                    name: 'Sophie van Dijk',
+                    email: 'sophie@example.nl',
+                    phone: '0687654321',
+                    street: 'Kruisweg',
+                    houseNo: '45',
+                    zip: '2011 LB',
+                    city: 'Haarlem',
+                    isHaarlem: true
+                },
+                items: [
+                    { name: 'Gelede Articulated Draak', color: '#ef4444', qty: 1, price: 19.95 }
+                ],
+                subtotal: 19.95,
+                shipping: 0.00,
+                total: 19.95,
+                paymentMethod: 'iDEAL',
+                status: 'In behandeling'
+            }
+        ];
+
+        // SAMPLE ANNOUNCEMENTS / BERICHTEN EN COUNTDOWNS
+        let announcements = [
+            {
+                id: 'ann-1',
+                type: 'promo',
+                title: '⚡ LOKALE ACTIE: Gratis Bezorging in Haarlem!',
+                message: 'Woon je in Haarlem (2011-2037)? Dan bezorgen we alle 3D bestellingen helemaal gratis aan huis!',
+                endTime: new Date(Date.now() + 86400000 * 2).toISOString(), // over 2 dagen
+                active: true
+            }
+        ];
+
+        window.onload = function() {
+            lucide.createIcons();
+            renderCategories();
+            renderProducts();
+            renderAnnouncements();
+            startCountdownTimerLoop();
+        };
+
+        // WINKELWAGEN DRAWER TOGGLE
+        function toggleCartDrawer() {
+            const drawer = document.getElementById('cartDrawer');
+            const overlay = document.getElementById('cartOverlay');
+            if (!drawer || !overlay) return;
+            
+            const isHidden = drawer.classList.contains('translate-x-full');
+            if (isHidden) {
+                drawer.classList.remove('translate-x-full');
+                overlay.classList.remove('hidden');
+            } else {
+                drawer.classList.add('translate-x-full');
+                overlay.classList.add('hidden');
+            }
+        }
+
+        // CHECKOUT MODAL OPEN/CLOSE
+        function openCheckoutModal() {
+            if (cart.length === 0) {
+                showToast("Je winkelwagen is nog leeg!");
+                return;
+            }
+            toggleCartDrawer();
+            document.getElementById('checkoutModal').classList.remove('hidden');
+            calculateDynamicShipping();
+        }
+
+        function closeCheckoutModal() {
+            document.getElementById('checkoutModal').classList.add('hidden');
+        }
+
+        // CUSTOM PRINT REQUEST SUBMIT
+        function submitCustomRequest(e) {
+            e.preventDefault();
+            showToast("Aanvraag succesvol verstuurd!");
+            alert("Bedankt voor je aanvraag! We nemen binnen 24 uur contact met je op met een vrijblijvende prijsopgave.");
+            e.target.reset();
+        }
+
+        // NAVIGATION TAB SWITCHING
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            
+            if(tabId === 'admin') {
+                if(!isAdminLoggedIn) {
+                    openAdminModal();
+                    return;
+                }
+                document.getElementById('adminTab').classList.remove('hidden');
+                renderAdminOrders();
+                renderAdminAnnouncements();
+                renderAdminProducts();
+            } else {
+                document.getElementById(tabId + 'Tab').classList.remove('hidden');
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function scrollToProducts() {
+            switchTab('shop');
+            document.getElementById('productsSection').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function renderCategories() {
+            const categories = ['Alles', ...new Set(products.map(p => p.category))];
+            const container = document.getElementById('categoryFilters');
+            container.innerHTML = categories.map(cat => `
+                <button onclick="filterCategory('${cat}')" class="px-3 py-1.5 rounded-xl text-xs font-semibold transition-all ${activeCategory === cat ? 'bg-brand-600 text-white shadow-md' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'}">
+                    ${cat}
+                </button>
+            `).join('');
+        }
+
+        function filterCategory(cat) {
+            activeCategory = cat;
+            renderCategories();
+            renderProducts();
+        }
+
+        function renderProducts() {
+            const grid = document.getElementById('productsGrid');
+            const filtered = activeCategory === 'Alles' ? products : products.filter(p => p.category === activeCategory);
+
+            grid.innerHTML = filtered.map(p => `
+                <div class="bg-slate-800 rounded-3xl overflow-hidden border border-slate-700/80 shadow-xl flex flex-col hover:border-slate-600 transition-all group">
+                    <div class="relative h-48 overflow-hidden bg-slate-900">
+                        <img src="${p.image}" alt="${p.name}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                        <span class="absolute top-3 left-3 bg-slate-900/80 backdrop-blur-md text-slate-200 text-[10px] font-bold px-2.5 py-1 rounded-full border border-slate-700">
+                            ${p.category}
+                        </span>
+                    </div>
+
+                    <div class="p-5 flex-grow flex flex-col justify-between space-y-4">
+                        <div>
+                            <h3 class="font-bold text-white text-lg leading-snug">${p.name}</h3>
+                            <p class="text-xs text-slate-400 mt-1 line-clamp-2">${p.description}</p>
+                        </div>
+
+                        <!-- Kleurselectie -->
+                        <div>
+                            <label class="block text-[10px] font-bold uppercase text-slate-400 mb-1.5">Kies Filament Kleur:</label>
+                            <div class="flex items-center space-x-2">
+                                ${p.colors.map(col => `
+                                    <button onclick="selectProductColor('${p.id}', '${col}')" 
+                                            class="w-6 h-6 rounded-full border-2 border-slate-700 transition-transform ${p.selectedColor === col ? 'ring-2 ring-brand-400 scale-110' : 'hover:scale-105'}"
+                                            style="background-color: ${col}">
+                                    </button>
+                                `).join('')}
+                            </div>
+                        </div>
+
+                        <div class="pt-3 border-t border-slate-700/60 flex items-center justify-between">
+                            <div>
+                                <span class="text-xs text-slate-400 block">Prijs</span>
+                                <span class="text-xl font-black text-white">€${p.price.toFixed(2).replace('.', ',')}</span>
+                            </div>
+                            <button onclick="addToCart('${p.id}')" class="px-4 py-2.5 bg-brand-600 hover:bg-brand-500 text-white font-bold rounded-xl text-xs shadow-lg shadow-brand-600/30 transition-all flex items-center space-x-1.5">
+                                <i data-lucide="plus" class="w-4 h-4"></i>
+                                <span>In Wagen</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            lucide.createIcons();
+        }
+
+        function selectProductColor(productId, color) {
+            const product = products.find(p => p.id === productId);
+            if(product) {
+                product.selectedColor = color;
+                renderProducts();
+            }
+        }
+
+        function addToCart(productId) {
+            const product = products.find(p => p.id === productId);
+            if(!product) return;
+
+            const existingIndex = cart.findIndex(item => item.id === productId && item.selectedColor === product.selectedColor);
+            if(existingIndex > -1) {
+                cart[existingIndex].qty += 1;
+            } else {
+                cart.push({
+                    id: product.id,
+                    name: product.name,
+                    price: product.price,
+                    selectedColor: product.selectedColor,
+                    qty: 1
+                });
+            }
+
+            updateCartUI();
+            showToast(`'${product.name}' toegevoegd!`);
+        }
+
+        function updateCartQty(index, delta) {
+            cart[index].qty += delta;
+            if(cart[index].qty <= 0) {
+                cart.splice(index, 1);
+            }
+            updateCartUI();
+        }
+
+        function updateCartUI() {
+            // Update cart badge
+            const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
+            document.getElementById('cartBadge').innerText = totalQty;
+
+            // Render cart drawer items
+            const container = document.getElementById('cartItemsList');
+            if(cart.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-12 text-slate-500 space-y-2">
+                        <i data-lucide="shopping-bag" class="w-12 h-12 mx-auto stroke-1"></i>
+                        <p class="text-sm">Je winkelwagen is leeg</p>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = cart.map((item, idx) => `
+                    <div class="bg-slate-900/80 p-3 rounded-2xl border border-slate-700 flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-4 h-4 rounded-full border border-slate-600 flex-shrink-0" style="background-color: ${item.selectedColor}"></div>
+                            <div>
+                                <h4 class="font-bold text-white text-xs">${item.name}</h4>
+                                <span class="text-slate-400 text-xs">€${item.price.toFixed(2).replace('.', ',')}</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <button onclick="updateCartQty(${idx}, -1)" class="w-6 h-6 bg-slate-800 hover:bg-slate-700 rounded-lg text-slate-300 font-bold flex items-center justify-center">-</button>
+                            <span class="text-xs font-bold text-white px-1">${item.qty}</span>
+                            <button onclick="updateCartQty(${idx}, 1)" class="w-6 h-6 bg-slate-800 hover:bg-slate-700 rounded-lg text-slate-300 font-bold flex items-center justify-center">+</button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            // Berekening met dynamische kortingscode
+            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+            let discount = 0;
+            if(appliedCoupon) {
+                discount = subtotal * (appliedCoupon.discountPercent / 100);
+            }
+
+            document.getElementById('cartSubtotal').innerText = `€${subtotal.toFixed(2).replace('.', ',')}`;
+            
+            if(discount > 0) {
+                document.getElementById('discountRow').classList.remove('hidden');
+                document.getElementById('cartDiscount').innerText = `-€${discount.toFixed(2).replace('.', ',')} (${appliedCoupon.discountPercent}%)`;
+            } else {
+                document.getElementById('discountRow').classList.add('hidden');
+            }
+
+            const total = Math.max(0, subtotal - discount);
+            document.getElementById('cartTotal').innerText = `€${total.toFixed(2).replace('.', ',')}`;
+
+            lucide.createIcons();
+        }
+
+        function applyCoupon() {
+            const input = document.getElementById('couponInput').value.trim().toUpperCase();
+            const msg = document.getElementById('couponMessage');
+            
+            const found = coupons.find(c => c.code.toUpperCase() === input);
+
+            if(found) {
+                appliedCoupon = found;
+                msg.className = "text-xs text-emerald-400 block";
+                msg.innerText = `✓ ${found.discountPercent}% korting toegepast! (${found.code})`;
+            } else {
+                appliedCoupon = null;
+                msg.className = "text-xs text-rose-400 block";
+                msg.innerText = "Ongeldige of verlopen kortingscode";
+            }
+            updateCartUI();
+        }
+
+        function processOrder(e) {
+            e.preventDefault();
+
+            const name = document.getElementById('custName').value;
+            const email = document.getElementById('custEmail').value;
+            const phone = document.getElementById('custPhone').value;
+            const street = document.getElementById('custStreet').value;
+            const houseNo = document.getElementById('custHouseNo').value;
+            const zip = document.getElementById('custZip').value.toUpperCase();
+            const city = document.getElementById('custCity').value;
+            const payment = document.querySelector('input[name="payment"]:checked').value;
+
+            const zipNum = parseInt(zip.substring(0, 4));
+            const isHaarlem = (!isNaN(zipNum) && zipNum >= 2011 && zipNum <= 2037) || city.toLowerCase().includes('haarlem');
+            const shippingCost = isHaarlem ? 0.00 : 4.95;
+
+            const subtotal = cart.reduce((s, i) => s + (i.price * i.qty), 0);
+            let discount = 0;
+            if(appliedCoupon) {
+                discount = subtotal * (appliedCoupon.discountPercent / 100);
+            }
+            const grandTotal = Math.max(0, subtotal - discount) + shippingCost;
+
+            const newOrder = {
+                id: 'ORD-' + Math.floor(1000 + Math.random() * 9000),
+                date: new Date().toLocaleString('nl-NL', { dateStyle: 'short', timeStyle: 'short' }),
+                customer: { name, email, phone, street, houseNo, zip, city, isHaarlem },
+                items: [...cart],
+                subtotal: subtotal,
+                shipping: shippingCost,
+                total: grandTotal,
+                paymentMethod: payment,
+                status: 'In behandeling'
+            };
+
+            orders.unshift(newOrder);
+
+            // Reset cart
+            cart = [];
+            appliedCoupon = null;
+            updateCartUI();
+            closeCheckoutModal();
+
+            showToast("🎉 Bestelling succesvol geplaatst!");
+            alert(`Bedankt voor je bestelling #${newOrder.id}!\nEen bevestiging is verzonden naar ${email}.`);
+        }
+
+        function renderAnnouncements() {
+            const container = document.getElementById('announcementsBannerContainer');
+            const activeAnnouncements = announcements.filter(a => a.active);
+
+            if(activeAnnouncements.length === 0) {
+                container.classList.add('hidden');
+                return;
+            }
+
+            container.classList.remove('hidden');
+            container.innerHTML = activeAnnouncements.map(ann => `
+                <div class="bg-gradient-to-r from-brand-700 via-indigo-800 to-slate-900 border-b border-brand-500/40 text-white px-4 py-2.5 text-xs sm:text-sm flex flex-col sm:flex-row items-center justify-between gap-2 shadow-xl">
+                    <div class="flex items-center space-x-2 text-center sm:text-left">
+                        <span class="px-2 py-0.5 rounded bg-brand-500/30 text-brand-300 font-bold uppercase text-[10px] border border-brand-400/30">
+                            ${ann.type === 'promo' ? '⚡ ACTIE' : '📢 MEDEDELING'}
+                        </span>
+                        <span class="font-bold">${ann.title}</span>
+                        <span class="hidden md:inline text-slate-300">- ${ann.message}</span>
+                    </div>
+
+                    ${ann.endTime ? `
+                        <div class="flex items-center space-x-1.5 bg-black/40 px-3 py-1 rounded-xl border border-white/10 text-amber-300 font-mono text-xs shadow-inner">
+                            <i data-lucide="clock" class="w-3.5 h-3.5 text-amber-400 animate-pulse"></i>
+                            <span>Verloopt in:</span>
+                            <strong id="timer-display-${ann.id}" class="font-bold">--:--:--</strong>
+                        </div>
+                    ` : ''}
+                </div>
+            `).join('');
+
+            lucide.createIcons();
+            updateCountdownDisplays();
+        }
+
+        function startCountdownTimerLoop() {
+            setInterval(() => {
+                updateCountdownDisplays();
+            }, 1000);
+        }
+
+        function updateCountdownDisplays() {
+            announcements.forEach(ann => {
+                if(!ann.endTime || !ann.active) return;
+                
+                const el = document.getElementById(`timer-display-${ann.id}`);
+                if(!el) return;
+
+                const diff = new Date(ann.endTime) - new Date();
+                if(diff <= 0) {
+                    el.innerText = "Afgelopen!";
+                    el.className = "text-rose-400 font-bold";
+                } else {
+                    const hours = Math.floor(diff / (1000 * 60 * 60));
+                    const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                    const secs = Math.floor((diff % (1000 * 60)) / 1000);
+                    
+                    const pad = n => n.toString().padStart(2, '0');
+                    el.innerText = `${pad(hours)}u ${pad(mins)}m ${pad(secs)}s`;
+                }
+            });
+        }
+
+        function openAdminModal() {
+            if(isAdminLoggedIn) {
+                switchTab('admin');
+            } else {
+                document.getElementById('adminLoginModal').classList.remove('hidden');
+            }
+        }
+
+        function closeAdminLoginModal() {
+            document.getElementById('adminLoginModal').classList.add('hidden');
+        }
+
+        function handleAdminLogin(e) {
+            e.preventDefault();
+            const user = document.getElementById('adminUser').value;
+            const pass = document.getElementById('adminPass').value;
+
+            if(user === 'admin' && pass === 'admin123') {
+                isAdminLoggedIn = true;
+                closeAdminLoginModal();
+                switchTab('admin');
+                showToast("Ingelogd als Beheerder");
+            } else {
+                document.getElementById('adminLoginError').classList.remove('hidden');
+            }
+        }
+
+        function logoutAdmin() {
+            isAdminLoggedIn = false;
+            switchTab('shop');
+            showToast("Uitgelogd uit beheer");
+        }
+
+        function switchAdminSubTab(sub) {
+            document.getElementById('adminSubTabOrders').classList.add('hidden');
+            document.getElementById('adminSubTabAnnouncements').classList.add('hidden');
+            document.getElementById('adminSubTabProducts').classList.add('hidden');
+
+            document.getElementById('btnAdminTabOrders').className = "pb-3 border-b-2 border-transparent text-slate-400 font-bold text-sm flex items-center space-x-2";
+            document.getElementById('btnAdminTabAnnouncements').className = "pb-3 border-b-2 border-transparent text-slate-400 font-bold text-sm flex items-center space-x-2";
+            document.getElementById('btnAdminTabProducts').className = "pb-3 border-b-2 border-transparent text-slate-400 font-bold text-sm flex items-center space-x-2";
+
+            if(sub === 'orders') {
+                document.getElementById('adminSubTabOrders').classList.remove('hidden');
+                document.getElementById('btnAdminTabOrders').className = "pb-3 border-b-2 border-brand-500 text-brand-400 font-bold text-sm flex items-center space-x-2";
+            } else if(sub === 'announcements') {
+                document.getElementById('adminSubTabAnnouncements').classList.remove('hidden');
+                document.getElementById('btnAdminTabAnnouncements').className = "pb-3 border-b-2 border-brand-500 text-brand-400 font-bold text-sm flex items-center space-x-2";
+            } else if(sub === 'products') {
+                document.getElementById('adminSubTabProducts').classList.remove('hidden');
+                document.getElementById('btnAdminTabProducts').className = "pb-3 border-b-2 border-brand-500 text-brand-400 font-bold text-sm flex items-center space-x-2";
+            }
+        }
+
+        function renderAdminOrders() {
+            document.getElementById('ordersCount').innerText = orders.length;
+            const container = document.getElementById('adminOrdersList');
+
+            if(orders.length === 0) {
+                container.innerHTML = `<div class="p-8 text-center text-slate-500 bg-slate-800 rounded-2xl">Geen bestellingen gevonden.</div>`;
+                return;
+            }
+
+            container.innerHTML = orders.map(ord => `
+                <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 shadow-xl space-y-4">
+                    <!-- Top bar -->
+                    <div class="flex flex-col sm:flex-row justify-between sm:items-center border-b border-slate-700 pb-3 gap-2">
+                        <div>
+                            <span class="font-bold text-brand-400 text-base">${ord.id}</span>
+                            <span class="text-slate-400 text-xs ml-2">📅 ${ord.date}</span>
+                        </div>
+                        <span class="px-3 py-1 rounded-full text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30 w-fit">
+                            ${ord.status}
+                        </span>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- KLANTGEGEVENS -->
+                        <div class="bg-slate-900/70 p-4 rounded-xl border border-slate-700 space-y-2 text-xs">
+                            <div class="flex justify-between items-center mb-1">
+                                <h4 class="font-bold text-brand-400 uppercase tracking-wider text-[11px] flex items-center space-x-1">
+                                    <i data-lucide="user" class="w-3.5 h-3.5"></i>
+                                    <span>Klant- & Adresgegevens</span>
+                                </h4>
+                                <button onclick="copyCustomerAddress('${ord.id}')" class="px-2 py-1 bg-slate-800 hover:bg-slate-700 rounded text-slate-300 text-[10px] flex items-center space-x-1 border border-slate-600">
+                                    <i data-lucide="copy" class="w-3 h-3"></i>
+                                    <span>Kopiëren</span>
+                                </button>
+                            </div>
+                            <p class="text-white font-bold text-sm">${ord.customer.name}</p>
+                            <p class="text-slate-300">📧 ${ord.customer.email}</p>
+                            <p class="text-slate-300">📞 ${ord.customer.phone}</p>
+                            <div class="pt-2 border-t border-slate-800">
+                                <p class="text-slate-200 font-medium">${ord.customer.street} ${ord.customer.houseNo}</p>
+                                <p class="text-slate-200 font-medium">${ord.customer.zip} ${ord.customer.city}</p>
+                                ${ord.customer.isHaarlem ? '<span class="inline-block mt-1 text-[10px] bg-emerald-500/20 text-emerald-300 font-bold px-2 py-0.5 rounded">Gratis Bezorging Haarlem</span>' : ''}
+                            </div>
+                        </div>
+
+                        <!-- ARTIKELEN & TOTALEN -->
+                        <div class="bg-slate-900/70 p-4 rounded-xl border border-slate-700 flex flex-col justify-between text-xs space-y-3">
+                            <div>
+                                <h4 class="font-bold text-brand-400 uppercase tracking-wider text-[11px] mb-2 flex items-center space-x-1">
+                                    <i data-lucide="shopping-bag" class="w-3.5 h-3.5"></i>
+                                    <span>Bestelde Items</span>
+                                </h4>
+                                <div class="space-y-1.5">
+                                    ${ord.items.map(it => `
+                                        <div class="flex justify-between items-center text-slate-200">
+                                            <span class="flex items-center space-x-2">
+                                                <span class="w-3 h-3 rounded-full border border-slate-600" style="background-color: ${it.selectedColor || it.color}"></span>
+                                                <span>${it.qty}x ${it.name}</span>
+                                            </span>
+                                            <span class="font-mono">€${(it.price * it.qty).toFixed(2).replace('.', ',')}</span>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+
+                            <div class="pt-2 border-t border-slate-800 space-y-1">
+                                <div class="flex justify-between text-slate-400">
+                                    <span>Betaalmethode:</span>
+                                    <span class="text-slate-200 font-medium">${ord.paymentMethod}</span>
+                                </div>
+                                <div class="flex justify-between text-slate-400">
+                                    <span>Verzending:</span>
+                                    <span class="text-slate-200 font-medium">${ord.shipping === 0 ? 'Gratis (Haarlem)' : '€' + ord.shipping.toFixed(2).replace('.', ',')}</span>
+                                </div>
+                                <div class="flex justify-between text-sm font-bold text-white pt-1">
+                                    <span>Totaalbedrag:</span>
+                                    <span class="text-brand-400 font-mono">€${ord.total.toFixed(2).replace('.', ',')}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            lucide.createIcons();
+        }
+
+        function copyCustomerAddress(orderId) {
+            const ord = orders.find(o => o.id === orderId);
+            if (!ord) return;
+            const text = `${ord.customer.name}\n${ord.customer.street} ${ord.customer.houseNo}\n${ord.customer.zip} ${ord.customer.city}\nE-mail: ${ord.customer.email}\nTel: ${ord.customer.phone}`;
+            
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+            
+            showToast("Adres gekopieerd naar klembord!");
+        }
+
+        function calculateDynamicShipping() {
+            const zip = (document.getElementById('custZip')?.value || '').trim().toUpperCase();
+            const city = (document.getElementById('custCity')?.value || '').toLowerCase();
+            const noticeText = document.getElementById('shippingNoticeText');
+            const noticeBox = document.getElementById('shippingNotice');
+
+            if (!zip && !city) {
+                if (noticeText) noticeText.innerText = "Vul je postcode/plaats in voor verzendberekening.";
+                if (noticeBox) noticeBox.className = "p-2.5 rounded-xl bg-slate-900/80 border border-slate-700 text-slate-300 flex items-center space-x-2";
+                return;
+            }
+
+            const zipNum = parseInt(zip.substring(0, 4));
+            const isHaarlem = (!isNaN(zipNum) && zipNum >= 2011 && zipNum <= 2037) || city.includes('haarlem');
+
+            if (isHaarlem) {
+                if (noticeText) noticeText.innerText = "🎉 Gefeliciteerd! Gratis bezorging in Haarlem!";
+                if (noticeBox) noticeBox.className = "p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 flex items-center space-x-2";
+            } else {
+                if (noticeText) noticeText.innerText = "🚚 Verzendkosten naar jouw adres: €4,95";
+                if (noticeBox) noticeBox.className = "p-2.5 rounded-xl bg-slate-900/80 border border-slate-700 text-slate-300 flex items-center space-x-2";
+            }
+        }
+
+        function handleCreateAnnouncement(e) {
+            e.preventDefault();
+            const type = document.getElementById('annType').value;
+            const title = document.getElementById('annTitle').value.trim();
+            const message = document.getElementById('annMessage').value.trim();
+            const durationHours = parseInt(document.getElementById('annDuration').value) || 0;
+
+            if (!title || !message) return;
+
+            const newAnn = {
+                id: 'ann-' + Date.now(),
+                type: type,
+                title: title,
+                message: message,
+                endTime: durationHours > 0 ? new Date(Date.now() + durationHours * 3600000).toISOString() : null,
+                active: true
+            };
+
+            announcements.unshift(newAnn);
+
+            document.getElementById('annTitle').value = '';
+            document.getElementById('annMessage').value = '';
+
+            renderAnnouncements();
+            renderAdminAnnouncements();
+            showToast("📢 Mededeling geplaatst!");
+        }
+
+        function deleteAnnouncement(id) {
+            announcements = announcements.filter(a => a.id !== id);
+            renderAnnouncements();
+            renderAdminAnnouncements();
+            showToast("Mededeling verwijderd!");
+        }
+
+        function toggleAnnouncement(id) {
+            const ann = announcements.find(a => a.id === id);
+            if (ann) {
+                ann.active = !ann.active;
+                renderAnnouncements();
+                renderAdminAnnouncements();
+                showToast(ann.active ? "Mededeling geactiveerd" : "Mededeling gedeactiveerd");
+            }
+        }
+
+        function renderAdminAnnouncements() {
+            const container = document.getElementById('adminAnnouncementsList');
+            if(!container) return;
+
+            if(announcements.length === 0) {
+                container.innerHTML = `<div class="p-6 text-center text-slate-500 bg-slate-900/50 rounded-xl">Geen geplaatste mededelingen.</div>`;
+                return;
+            }
+
+            container.innerHTML = announcements.map(a => `
+                <div class="bg-slate-900 p-4 rounded-xl border border-slate-700 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                    <div class="space-y-1">
+                        <div class="flex items-center space-x-2">
+                            <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase ${a.active ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' : 'bg-slate-700 text-slate-400'}">
+                                ${a.active ? 'Actief' : 'Gepauzeerd'}
+                            </span>
+                            <h4 class="font-bold text-white text-sm">${a.title}</h4>
+                        </div>
+                        <p class="text-xs text-slate-400">${a.message}</p>
+                    </div>
+
+                    <div class="flex items-center space-x-2">
+                        <button onclick="toggleAnnouncement('${a.id}')" class="px-2.5 py-1.5 bg-slate-700 hover:bg-slate-600 rounded-lg text-xs font-semibold text-slate-200">
+                            ${a.active ? 'Pauzeren' : 'Activeren'}
+                        </button>
+                        <button onclick="deleteAnnouncement('${a.id}')" class="px-2.5 py-1.5 bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 rounded-lg text-xs font-semibold border border-rose-500/30">
+                            Verwijderen
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+
+            lucide.createIcons();
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            
+            if(tabId === 'admin') {
+                if(!isAdminLoggedIn) {
+                    openAdminModal();
+                    return;
+                }
+                document.getElementById('adminTab').classList.remove('hidden');
+                renderAdminOrders();
+                renderAdminAnnouncements();
+                renderAdminCoupons();
+                renderAdminProducts();
+            } else {
+                document.getElementById(tabId + 'Tab').classList.remove('hidden');
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function switchAdminSubTab(sub) {
+            document.getElementById('adminSubTabOrders').classList.add('hidden');
+            document.getElementById('adminSubTabAnnouncements').classList.add('hidden');
+            document.getElementById('adminSubTabCoupons').classList.add('hidden');
+            document.getElementById('adminSubTabProducts').classList.add('hidden');
+
+            document.getElementById('btnAdminTabOrders').className = "pb-3 border-b-2 border-transparent text-slate-400 font-bold text-sm flex items-center space-x-2 whitespace-nowrap";
+            document.getElementById('btnAdminTabAnnouncements').className = "pb-3 border-b-2 border-transparent text-slate-400 font-bold text-sm flex items-center space-x-2 whitespace-nowrap";
+            document.getElementById('btnAdminTabCoupons').className = "pb-3 border-b-2 border-transparent text-slate-400 font-bold text-sm flex items-center space-x-2 whitespace-nowrap";
+            document.getElementById('btnAdminTabProducts').className = "pb-3 border-b-2 border-transparent text-slate-400 font-bold text-sm flex items-center space-x-2 whitespace-nowrap";
+
+            if(sub === 'orders') {
+                document.getElementById('adminSubTabOrders').classList.remove('hidden');
+                document.getElementById('btnAdminTabOrders').className = "pb-3 border-b-2 border-brand-500 text-brand-400 font-bold text-sm flex items-center space-x-2 whitespace-nowrap";
+            } else if(sub === 'announcements') {
+                document.getElementById('adminSubTabAnnouncements').classList.remove('hidden');
+                document.getElementById('btnAdminTabAnnouncements').className = "pb-3 border-b-2 border-brand-500 text-brand-400 font-bold text-sm flex items-center space-x-2 whitespace-nowrap";
+            } else if(sub === 'coupons') {
+                document.getElementById('adminSubTabCoupons').classList.remove('hidden');
+                document.getElementById('btnAdminTabCoupons').className = "pb-3 border-b-2 border-brand-500 text-brand-400 font-bold text-sm flex items-center space-x-2 whitespace-nowrap";
+                renderAdminCoupons();
+            } else if(sub === 'products') {
+                document.getElementById('adminSubTabProducts').classList.remove('hidden');
+                document.getElementById('btnAdminTabProducts').className = "pb-3 border-b-2 border-brand-500 text-brand-400 font-bold text-sm flex items-center space-x-2 whitespace-nowrap";
+            }
+        }
+
+        function handleCreateCoupon(e) {
+            e.preventDefault();
+            const code = document.getElementById('couponCodeInput').value.trim().toUpperCase();
+            const percent = parseInt(document.getElementById('couponPercentInput').value);
+            const desc = document.getElementById('couponDescInput').value.trim();
+
+            if(!code || isNaN(percent) || percent <= 0) return;
+
+            // Check if exists
+            if(coupons.some(c => c.code === code)) {
+                showToast("⚠️ Deze kortingscode bestaat al!");
+                return;
+            }
+
+            coupons.push({
+                code: code,
+                discountPercent: percent,
+                description: desc || `${percent}% korting op je bestelling`
+            });
+
+            // Form opschonen
+            document.getElementById('couponCodeInput').value = '';
+            document.getElementById('couponPercentInput').value = '';
+            document.getElementById('couponDescInput').value = '';
+
+            renderAdminCoupons();
+            showToast(`🏷️ Kortingscode '${code}' aangemaakt!`);
+        }
+
+        function deleteCoupon(code) {
+            coupons = coupons.filter(c => c.code !== code);
+            if(appliedCoupon && appliedCoupon.code === code) {
+                appliedCoupon = null;
+                updateCartUI();
+            }
+            renderAdminCoupons();
+            showToast("Kortingscode verwijderd!");
+        }
+
+        function renderAdminCoupons() {
+            const container = document.getElementById('adminCouponsList');
+            if(!container) return;
+
+            if(coupons.length === 0) {
+                container.innerHTML = `<div class="p-6 text-center text-slate-500 bg-slate-900/50 rounded-xl">Geen actieve kortingscodes ingesteld.</div>`;
+                return;
+            }
+
+            container.innerHTML = coupons.map(c => `
+                <div class="bg-slate-900 p-4 rounded-xl border border-slate-700 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                    <div class="space-y-1">
+                        <div class="flex items-center space-x-2">
+                            <span class="px-2.5 py-1 rounded-lg text-xs font-mono font-bold uppercase bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                                ${c.code}
+                            </span>
+                            <span class="text-sm font-bold text-white font-mono text-brand-400">
+                                ${c.discountPercent}% Korting
+                            </span>
+                        </div>
+                        <p class="text-xs text-slate-400">${c.description}</p>
+                    </div>
+
+                    <button onclick="deleteCoupon('${c.code}')" class="px-3 py-1.5 bg-rose-500/20 text-rose-300 hover:bg-rose-500/30 rounded-lg text-xs font-bold border border-rose-500/30 flex items-center space-x-1 transition-colors">
+                        <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                        <span>Verwijderen</span>
+                    </button>
+                </div>
+            `).join('');
+
+            lucide.createIcons();
+        }
+
+        function renderAdminProducts() {
+            document.getElementById('adminProductsCount').innerText = products.length;
+            const container = document.getElementById('adminProductsGrid');
+
+            container.innerHTML = products.map(p => `
+                <div class="bg-slate-900 p-4 rounded-xl border border-slate-700 space-y-3 flex flex-col justify-between">
+                    <div class="flex items-center space-x-3">
+                        <img src="${p.image}" class="w-12 h-12 rounded-lg object-cover border border-slate-700">
+                        <div>
+                            <h4 class="font-bold text-white text-xs">${p.name}</h4>
+                            <span class="text-brand-400 font-mono text-xs">€${p.price.toFixed(2).replace('.', ',')}</span>
+                        </div>
+                    </div>
+                    <div class="flex justify-end space-x-2 pt-2 border-t border-slate-800">
+                        <button onclick="openProductEditModal('${p.id}')" class="px-2 py-1 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded text-xs font-semibold">Bewerken</button>
+                        <button onclick="deleteProduct('${p.id}')" class="px-2 py-1 bg-rose-500/20 text-rose-300 rounded text-xs font-semibold hover:bg-rose-500/30">Verwijderen</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function openProductEditModal(productId) {
+            const modal = document.getElementById('productModal');
+            const title = document.getElementById('productModalTitle');
+            const idInput = document.getElementById('editProductId');
+            const nameInput = document.getElementById('prodName');
+            const catInput = document.getElementById('prodCategory');
+            const priceInput = document.getElementById('prodPrice');
+            const imgInput = document.getElementById('prodImage');
+            const descInput = document.getElementById('prodDesc');
+            const colorsInput = document.getElementById('prodColors');
+
+            if (productId) {
+                const prod = products.find(p => p.id === productId);
+                if (prod) {
+                    title.innerText = "Product Bewerken";
+                    idInput.value = prod.id;
+                    nameInput.value = prod.name;
+                    catInput.value = prod.category;
+                    priceInput.value = prod.price;
+                    imgInput.value = prod.image;
+                    descInput.value = prod.description;
+                    colorsInput.value = prod.colors.join(', ');
+                }
+            } else {
+                title.innerText = "Nieuw Product Toevoegen";
+                idInput.value = "";
+                nameInput.value = "";
+                catInput.value = "";
+                priceInput.value = "";
+                imgInput.value = "https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&w=600&q=80";
+                descInput.value = "";
+                colorsInput.value = "#ef4444, #3b82f6, #10b981";
+            }
+
+            modal.classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        function closeProductModal() {
+            document.getElementById('productModal').classList.add('hidden');
+        }
+
+        function handleSaveProduct(e) {
+            e.preventDefault();
+            const id = document.getElementById('editProductId').value;
+            const name = document.getElementById('prodName').value.trim();
+            const category = document.getElementById('prodCategory').value.trim();
+            const price = parseFloat(document.getElementById('prodPrice').value);
+            const image = document.getElementById('prodImage').value.trim();
+            const description = document.getElementById('prodDesc').value.trim();
+            const colorsStr = document.getElementById('prodColors').value;
+            const colors = colorsStr.split(',').map(c => c.trim()).filter(c => c.length > 0);
+
+            if (id) {
+                const index = products.findIndex(p => p.id === id);
+                if (index > -1) {
+                    products[index] = {
+                        ...products[index],
+                        name,
+                        category,
+                        price,
+                        image,
+                        description,
+                        colors: colors.length > 0 ? colors : ['#000000'],
+                        selectedColor: colors[0] || '#000000'
+                    };
+                    showToast("Product bijgewerkt!");
+                }
+            } else {
+                const newProd = {
+                    id: 'p' + Date.now(),
+                    name,
+                    category,
+                    price,
+                    stock: 10,
+                    colors: colors.length > 0 ? colors : ['#000000'],
+                    selectedColor: colors[0] || '#000000',
+                    image,
+                    description
+                };
+                products.push(newProd);
+                showToast("Nieuw product toegevoegd!");
+            }
+
+            closeProductModal();
+            renderCategories();
+            renderProducts();
+            renderAdminProducts();
+        }
+
+        function deleteProduct(id) {
+            products = products.filter(p => p.id !== id);
+            renderProducts();
+            renderAdminProducts();
+            showToast("Product verwijderd");
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastMsg').innerText = msg;
+
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
